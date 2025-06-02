@@ -4,6 +4,8 @@ install.packages("dplyr")
 install.packages("RSQLite")
 install.packages("shiny")
 install.packages("shinydashboard")
+install.packages("zoo")  
+install.packages("sf")
 
 library(readr)
 library(dplyr)
@@ -12,6 +14,9 @@ library(RSQLite)
 library(ggplot2)
 library(shiny)
 library(shinydashboard)
+library(zoo)
+library(sf)
+
 
 # ETAPA 1 - LEITURA DOS DADOS
 casos <- read_delim(
@@ -273,6 +278,9 @@ casos_completos <- casos_municipais %>%
   left_join(estados, by = "codigoestadual") %>%
   left_join(regioes, by = "codigoregiao")
 
+# ✅ Converter para tipo Date
+casos_completos$data <- as.Date(casos_completos$data)
+
 # 🇧🇷 Brasil
 casos_brasil <- sum(casos_completos$casosnovos, na.rm = TRUE)
 obitos_brasil <- sum(casos_completos$mortesnovas, na.rm = TRUE)
@@ -388,7 +396,7 @@ print(tabela_estados)
 
 
 
-#==========================
+#========================== CASOS POR DIA
 # 🟦 Total de casos por dia no Brasil
 casos_brasil <- casos_completos %>%
   group_by(data) %>%
@@ -403,7 +411,7 @@ casos_rj <- casos_completos %>%
   mutate(entidade = "RJ")
 
 # 🔄 Combinar e garantir dias ausentes com valor zero
-datas_completas <- seq(min(casos_completo$data), max(casos_completo$data), by = "1 day")
+datas_completas <- seq(min(casos_completos$data), max(casos_completos$data), by = "1 day")
 
 df_brasil <- data.frame(data = datas_completas) %>%
   left_join(casos_brasil, by = "data") %>%
@@ -435,3 +443,165 @@ ggplot(df_final, aes(x = dia, y = casosnovos, color = entidade)) +
     color = "Local"
   ) +
   theme_minimal()
+
+#========================= MEDIA MOVEL DE OBITOS
+# 🔷 Óbitos por dia - BR
+obitos_brasil <- casos_completos %>%
+  group_by(data) %>%
+  summarise(obitos = sum(mortesnovas, na.rm = TRUE), .groups = "drop") %>%
+  mutate(entidade = "Brasil")
+
+# 🔷 Óbitos por dia - RJ
+obitos_rj <- casos_completos %>%
+  filter(uf == "RJ") %>%
+  group_by(data) %>%
+  summarise(obitos = sum(mortesnovas, na.rm = TRUE), .groups = "drop") %>%
+  mutate(entidade = "RJ")
+
+# ⛑️ Preencher com zero onde não há dados
+df_brasil <- data.frame(data = datas_completas) %>%
+  left_join(obitos_brasil, by = "data") %>%
+  mutate(
+    obitos = ifelse(is.na(obitos), 0, obitos),
+    entidade = "Brasil"
+  )
+
+df_rj <- data.frame(data = datas_completas) %>%
+  left_join(obitos_rj, by = "data") %>%
+  mutate(
+    obitos = ifelse(is.na(obitos), 0, obitos),
+    entidade = "RJ"
+  )
+
+# 📈 Combinar e calcular média móvel
+df_final <- bind_rows(df_brasil, df_rj) %>%
+  arrange(data) %>%
+  group_by(entidade) %>%
+  mutate(
+    media_movel = rollmean(obitos, k = 6, align = "right", fill = 0),
+    dia = row_number()
+  ) %>%
+  ungroup()
+
+# 🔍 Análise de tendência
+tendencias <- df_final %>%
+  group_by(entidade) %>%
+  summarise(
+    ultimo = last(media_movel),
+    anterior = dplyr::nth(media_movel, n = n() - 14),
+    variacao = round(100 * (ultimo - anterior) / ifelse(anterior == 0, 1, anterior), 1),
+    tendencia = case_when(
+      abs(variacao) <= 15 ~ "Estável",
+      variacao > 15 ~ "Em crescimento",
+      variacao < -15 ~ "Em queda",
+      TRUE ~ "Indefinido"
+    )
+  )
+
+print(tendencias)
+
+# 🎯 Gráfico
+ggplot(df_final, aes(x = dia, y = media_movel, color = entidade)) +
+  geom_point(size = 1.3) +
+  geom_line(size = 1) +
+  labs(
+    title = "Média Móvel de Óbitos – Brasil vs RJ (Janela: 6 dias)",
+    subtitle = "Análise de tendência: variação entre o último dia e o 14º dia anterior",
+    x = "Dia (contagem sequencial)",
+    y = "Média Móvel de Óbitos",
+    color = "Local"
+  ) +
+  theme_minimal()
+
+
+#======================== CASOS ACUMULADOS POR DIA
+# 🔴 Casos e óbitos por dia - Estado do RJ
+dados_rj <- casos_completos %>%
+  filter(uf == "RJ") %>%
+  group_by(data) %>%
+  summarise(
+    casosnovos = sum(casosnovos, na.rm = TRUE),
+    mortesnovas = sum(mortesnovas, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+# ⛑️ Preencher dias ausentes com zero
+dados_rj_completo <- data.frame(data = datas_completas) %>%
+  left_join(dados_rj, by = "data") %>%
+  mutate(
+    casosnovos = ifelse(is.na(casosnovos), 0, casosnovos),
+    mortesnovas = ifelse(is.na(mortesnovas), 0, mortesnovas)
+  ) %>%
+  mutate(
+    casos_acumulados = cumsum(casosnovos),
+    obitos_acumulados = cumsum(mortesnovas),
+    dia = row_number()
+  )
+
+# 📊 Gráfico
+ggplot(dados_rj_completo) +
+  geom_point(aes(x = dia, y = casos_acumulados), color = "blue", size = 1.5) +
+  geom_line(aes(x = dia, y = casos_acumulados), color = "blue", linewidth = 1) +
+  geom_point(aes(x = dia, y = obitos_acumulados), color = "red", size = 1.5) +
+  geom_line(aes(x = dia, y = obitos_acumulados), color = "red", linewidth = 1) +
+  labs(
+    title = "Casos e Óbitos Acumulados – Estado do Rio de Janeiro",
+    x = "Dia (contagem sequencial)",
+    y = "Total acumulado"
+  ) +
+  theme_minimal()
+
+
+#=================== MAPA DE CASOS NO BRASIL
+casos_estado <- casos_completos %>%
+  group_by(uf) %>%
+  summarise(casos_total = sum(casosnovos, na.rm = TRUE), .groups = "drop")
+
+shape_brasil <- st_read("Mapas/BR_UF_2022.shp", quiet = TRUE)
+
+# 🔗 Juntar com dados de casos
+shape_brasil_dados <- shape_brasil %>%
+  left_join(casos_estado, by = c("SIGLA_UF" = "uf"))  # ajuste conforme o nome da coluna
+
+# 🗺️ Gráfico
+ggplot(shape_brasil_dados) +
+  geom_sf(aes(fill = casos_total), color = "white", size = 0.2) +
+  scale_fill_gradient(low = "#deebf7", high = "#08519c", na.value = "grey90") +
+  labs(
+    title = "Casos Confirmados Acumulados por Estado – Brasil",
+    fill = "Casos"
+  ) +
+  theme_minimal()
+
+
+
+#============ MUNICIPIOS DO RJ
+
+# ✅ Agregar casos acumulados por município
+casos_municipio_rj <- casos_completos %>%
+  filter(codigoestadual == "33") %>%  # RJ = 33
+  group_by(codigomunicipal) %>%
+  summarise(casos_total = sum(casosnovos, na.rm = TRUE), .groups = "drop")
+
+# 🌍 Ler shapefile do RJ por municípios
+mapa_rj <- st_read("Mapas/RJ_Municipios_2022.shp", quiet = TRUE)
+
+# Ajuste "CD_MUN" conforme o nome da coluna do código IBGE no shapefile
+mapa_rj_dados <- mapa_rj %>%
+  mutate(codigomunicipal = as.character(CD_MUN)) %>%
+  left_join(casos_municipio_rj, by = "codigomunicipal")
+
+# 🗺️ Gráfico
+ggplot(mapa_rj_dados) +
+  geom_sf(aes(fill = casos_total), color = "white", linewidth = 0.2) +
+  scale_fill_gradient(low = "#fee0d2", high = "#de2d26", na.value = "grey90") +
+  labs(
+    title = "Casos Confirmados Acumulados por Município – Estado do RJ",
+    fill = "Casos acumulados"
+  ) +
+  theme_minimal()
+
+names(mapa_rj)
+
+
+
