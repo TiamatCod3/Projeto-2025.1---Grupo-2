@@ -6,6 +6,8 @@ install.packages("shiny")
 install.packages("shinydashboard")
 install.packages("zoo")  
 install.packages("sf")
+install.packages("DT")
+
 
 library(readr)
 library(dplyr)
@@ -16,6 +18,8 @@ library(shiny)
 library(shinydashboard)
 library(zoo)
 library(sf)
+library(DT)
+
 
 
 # ETAPA 1 - LEITURA DOS DADOS
@@ -602,6 +606,150 @@ ggplot(mapa_rj_dados) +
   theme_minimal()
 
 names(mapa_rj)
+
+
+#=========================== SHINY SERVER
+ui <- dashboardPage(
+  dashboardHeader(title = "Painel COVID-19 - RJ"),
+  dashboardSidebar(
+    sidebarMenu(
+      menuItem("Resumo", tabName = "resumo", icon = icon("dashboard")),
+      menuItem("Tabelas", tabName = "tabelas", icon = icon("table")),
+      menuItem("Gráficos", tabName = "graficos", icon = icon("chart-line")),
+      menuItem("Mapas", tabName = "mapas", icon = icon("globe"))
+    )
+  ),
+  dashboardBody(
+    tabItems(
+      # Aba Resumo
+      tabItem(tabName = "resumo",
+              fluidRow(
+                valueBoxOutput("casos_brasil"),
+                valueBoxOutput("casos_rj"),
+                valueBoxOutput("casos_mun_rj")
+              ),
+              fluidRow(
+                valueBoxOutput("letalidade_brasil"),
+                valueBoxOutput("letalidade_rj"),
+                valueBoxOutput("letalidade_mun_rj")
+              )
+      ),
+      
+      # Aba Tabelas
+      tabItem(tabName = "tabelas",
+              fluidRow(
+                box(title = "Top 10 Cidades com Maior Taxa de Casos", width = 12, DT::dataTableOutput("top_municipios"))
+              ),
+              fluidRow(
+                box(title = "Top 10 Cidades do RJ", width = 12, DT::dataTableOutput("top_rj"))
+              ),
+              fluidRow(
+                box(title = "Resumo por Estado", width = 12, DT::dataTableOutput("tabela_estados"))
+              )
+      ),
+      
+      # Aba Gráficos
+      tabItem(tabName = "graficos",
+              fluidRow(
+                box(title = "Casos por Dia", width = 12, plotOutput("grafico_casos_dia"))
+              ),
+              fluidRow(
+                box(title = "Média Móvel de Óbitos", width = 12, plotOutput("grafico_media_obitos"))
+              ),
+              fluidRow(
+                box(title = "Casos e Óbitos Acumulados RJ", width = 12, plotOutput("grafico_acumulados_rj"))
+              )
+      ),
+      
+      # Aba Mapas
+      tabItem(tabName = "mapas",
+              fluidRow(
+                box(title = "Mapa de Casos Confirmados - Brasil", width = 12, plotOutput("mapa_brasil"))
+              ),
+              fluidRow(
+                box(title = "Mapa de Casos Confirmados - RJ", width = 12, plotOutput("mapa_rj"))
+              )
+      )
+    )
+  )
+)
+
+server <- function(input, output, session) {
+  # Os dados devem ser carregados previamente e organizados conforme o script de preparação
+  
+  # Exemplos de outputs:
+  output$casos_brasil <- renderValueBox({
+    valueBox(value = formatC(casos_brasil, big.mark = ","), subtitle = "Casos no Brasil", icon = icon("globe"), color = "blue")
+  })
+  
+  output$casos_rj <- renderValueBox({
+    valueBox(value = formatC(casos_rj_total, big.mark = ","), subtitle = "Casos no RJ", icon = icon("map"), color = "teal")
+  })
+  
+  output$casos_mun_rj <- renderValueBox({
+    valueBox(value = formatC(casos_mun_rj_total, big.mark = ","), subtitle = "Casos no Mun. RJ", icon = icon("city"), color = "olive")
+  })
+  
+  output$letalidade_brasil <- renderValueBox({
+    valueBox(value = paste0(letalidade_brasil, "%"), subtitle = "Letalidade Brasil", icon = icon("heartbeat"), color = "red")
+  })
+  
+  output$letalidade_rj <- renderValueBox({
+    valueBox(value = paste0(letalidade_rj, "%"), subtitle = "Letalidade RJ", icon = icon("heartbeat"), color = "red")
+  })
+  
+  output$letalidade_mun_rj <- renderValueBox({
+    valueBox(value = paste0(letalidade_mun_rj, "%"), subtitle = "Letalidade Mun. RJ", icon = icon("heartbeat"), color = "red")
+  })
+  
+  output$top_municipios <- DT::renderDataTable({ DT::datatable(top_municipios) })
+  output$top_rj <- DT::renderDataTable({ DT::datatable(top_rj) })
+  output$tabela_estados <- DT::renderDataTable({ DT::datatable(tabela_estados) })
+  
+  output$grafico_casos_dia <- renderPlot({
+    ggplot(df_final, aes(x = dia, y = casosnovos, color = entidade)) +
+      geom_point(size = 1.5) +
+      geom_line() +
+      labs(title = "Casos Novos por Dia", x = "Dia", y = "Casos Novos") +
+      theme_minimal()
+  })
+  
+  output$grafico_media_obitos <- renderPlot({
+    ggplot(df_final, aes(x = dia, y = media_movel, color = entidade)) +
+      geom_point(size = 1.3) +
+      geom_line(size = 1) +
+      labs(title = "Média Móvel de Óbitos", x = "Dia", y = "Óbitos") +
+      theme_minimal()
+  })
+  
+  output$grafico_acumulados_rj <- renderPlot({
+    ggplot(dados_rj_completo) +
+      geom_point(aes(x = dia, y = casos_acumulados), color = "blue") +
+      geom_line(aes(x = dia, y = casos_acumulados), color = "blue") +
+      geom_point(aes(x = dia, y = obitos_acumulados), color = "red") +
+      geom_line(aes(x = dia, y = obitos_acumulados), color = "red") +
+      labs(title = "Casos e Óbitos Acumulados RJ", x = "Dia", y = "Total Acumulado") +
+      theme_minimal()
+  })
+  
+  output$mapa_brasil <- renderPlot({
+    ggplot(shape_brasil_dados) +
+      geom_sf(aes(fill = casos_total), color = "white", size = 0.2) +
+      scale_fill_gradient(low = "#deebf7", high = "#08519c", na.value = "grey90") +
+      labs(title = "Casos Confirmados por Estado", fill = "Casos") +
+      theme_minimal()
+  })
+  
+  output$mapa_rj <- renderPlot({
+    ggplot(mapa_rj_dados) +
+      geom_sf(aes(fill = casos_total), color = "white", size = 0.2) +
+      scale_fill_gradient(low = "#fee0d2", high = "#de2d26", na.value = "grey90") +
+      labs(title = "Casos Confirmados por Município - RJ", fill = "Casos") +
+      theme_minimal()
+  })
+}
+
+shinyApp(ui, server)
 
 
 
