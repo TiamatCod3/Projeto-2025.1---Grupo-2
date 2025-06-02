@@ -1,0 +1,19 @@
+# prompt: instale e carergue os pacotes R SQLite e readr
+install.packages('RSQLite')
+install.packages('readr')
+
+library(RSQLite)
+library(readr)
+library(dplyr)
+
+conn <- dbConnect(SQLite(), "Data/G2.db")
+casos <- read.csv("Data/Casos.csv", sep = ";", dec = ",")
+base_conn <- dbConnect(SQLite(), "Data/Base.db")
+
+dbExecute(conn, "CREATE TABLE IF NOT EXISTS Regiao ( CodigoRegiao INTEGER PRIMARY KEY, NomeRegiao TEXT NOT NULL);")
+
+regioes <- dbGetQuery(base_conn, "SELECT * FROM Regiao")
+dbWriteTable(conn, "Regiao", regioes, overwrite=TRUE)
+
+
+
