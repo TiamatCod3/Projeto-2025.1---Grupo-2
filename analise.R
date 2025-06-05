@@ -1,12 +1,12 @@
 # 📦 Carregamento de pacotes
-install.packages("readr")
-install.packages("dplyr")
-install.packages("RSQLite")
-install.packages("shiny")
-install.packages("shinydashboard")
-install.packages("zoo")  
-install.packages("sf")
-install.packages("DT")
+# install.packages("readr")
+# install.packages("dplyr")
+# install.packages("RSQLite")
+# install.packages("shiny")
+# install.packages("shinydashboard")
+# install.packages("zoo")  
+# install.packages("sf")
+# install.packages("DT")
 
 
 library(readr)
