@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Monitoramento</title>
+    <!-- Incluindo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo a fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones (Lucide Icons) -->
+    <script src="https://unpkg.com/lucide-react@latest/dist/lucide-react.js"></script>
+    <style>
+        /* Estilos personalizados para combinar com o PDF */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Fundo cinza claro como no PDF */
+        }
+        /* Cor de fundo do cabeçalho principal */
+        .header-bg {
+            background-color: #1e3a8a; /* Azul escuro do PDF */
+        }
+        /* Estilo base para os cards */
+        .card {
+            background-color: #ffffff;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 1.5rem;
+        }
+        .card-title {
+            color: #374151; /* Cinza escuro para os títulos */
+            font-weight: 600;
+        }
+        .metric-value {
+            color: #1e3a8a; /* Azul escuro para os números de destaque */
+            font-weight: 700;
+            font-size: 2rem;
+        }
+        .metric-label {
+            color: #6b7280; /* Cinza médio para os rótulos */
+            font-size: 0.875rem;
+        }
+        /* Estilo para os placeholders de gráficos e mapas */
+        .placeholder-chart {
+            background-color: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 250px;
+            border-radius: 0.5rem;
+            color: #9ca3af;
+        }
+        /* Estilo para tabelas */
+        table {
+            width: 100%;
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        thead th {
+            background-color: #f9fafb;
+            color: #374151;
+            font-weight: 600;
+        }
+        tbody tr:nth-child(even) {
+            background-color: #f9fafb;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Cabeçalho Principal -->
+    <header class="header-bg text-white p-4 shadow-md">
+        <h1 class="text-2xl font-bold text-center">Painel de Monitoramento - COVID-19</h1>
+    </header>
+
+    <!-- Conteúdo do Dashboard -->
+    <main class="p-4 sm:p-6 md:p-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Card: Total de casos confirmados -->
+            <div class="card text-center">
+                <h2 class="card-title mb-2">Total de casos confirmados</h2>
+                <p class="metric-value">1.59M</p>
+                <p class="metric-label">Brasil</p>
+            </div>
+            <!-- Card: Total de óbitos -->
+            <div class="card text-center">
+                <h2 class="card-title mb-2">Total de óbitos</h2>
+                <p class="metric-value">65.4K</p>
+                <p class="metric-label">Brasil</p>
+            </div>
+            <!-- Card: Letalidade -->
+            <div class="card text-center">
+                <h2 class="card-title mb-2">Letalidade</h2>
+                <p class="metric-value">4.1%</p>
+                <p class="metric-label">Brasil</p>
+            </div>
+            <!-- Card: Mortalidade -->
+            <div class="card text-center">
+                <h2 class="card-title mb-2">Mortalidade</h2>
+                <p class="metric-value">31.1</p>
+                <p class="metric-label">por 100 mil hab. - Brasil</p>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Coluna da Esquerda -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Mapa do Brasil -->
+                <div class="card">
+                    <h2 class="card-title mb-4">Casos no Brasil</h2>
+                    <div class="placeholder-chart">
+                        <span>[Mapa do Brasil por estados]</span>
+                    </div>
+                </div>
+                <!-- Gráfico de Casos Novos -->
+                <div class="card">
+                    <h2 class="card-title mb-4">Casos novos por dia (Brasil e RJ)</h2>
+                    <div class="placeholder-chart">
+                        <span>[Gráfico de linhas]</span>
+                    </div>
+                </div>
+                <!-- Tabela de Cidades do Brasil -->
+                <div class="card overflow-x-auto">
+                    <h2 class="card-title mb-4">10 cidades do Brasil com maior taxa de casos</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>UF</th>
+                                <th>Nome</th>
+                                <th>Taxa</th>
+                                <th>Letalidade</th>
+                                <th>Mortalidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SP</td>
+                                <td>São Paulo</td>
+                                <td>1.234,5</td>
+                                <td>5.2%</td>
+                                <td>64,1</td>
+                            </tr>
+                            <tr>
+                                <td>DF</td>
+                                <td>Brasília</td>
+                                <td>1.112,8</td>
+                                <td>1.8%</td>
+                                <td>20,0</td>
+                            </tr>
+                            <tr>
+                                <td>RR</td>
+                                <td>Boa Vista</td>
+                                <td>987,6</td>
+                                <td>2.5%</td>
+                                <td>24,7</td>
+                            </tr>
+                             <!-- Adicione mais linhas conforme necessário -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Coluna da Direita -->
+            <div class="lg:col-span-1 space-y-6">
+                 <!-- Gráfico de Casos por Região -->
+                <div class="card">
+                    <h2 class="card-title mb-4">Casos por região do Brasil</h2>
+                    <div class="placeholder-chart">
+                        <span>[Gráfico de setores]</span>
+                    </div>
+                </div>
+                <!-- Mapa do RJ -->
+                <div class="card">
+                    <h2 class="card-title mb-4">Casos no Estado do Rio de Janeiro</h2>
+                    <div class="placeholder-chart">
+                        <span>[Mapa do RJ por cidades]</span>
+                    </div>
+                </div>
+                <!-- Gráfico de Casos Sudeste -->
+                <div class="card">
+                    <h2 class="card-title mb-4">Casos por estados da região Sudeste</h2>
+                    <div class="placeholder-chart">
+                        <span>[Gráfico de setores]</span>
+                    </div>
+                </div>
+                 <!-- Tabela de Cidades do RJ -->
+                <div class="card overflow-x-auto">
+                    <h2 class="card-title mb-4">10 cidades do RJ com maior taxa de casos</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Taxa</th>
+                                <th>Letalidade</th>
+                                <th>Mortalidade</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Rio de Janeiro</td>
+                                <td>890,1</td>
+                                <td>7.1%</td>
+                                <td>63,2</td>
+                            </tr>
+                             <tr>
+                                <td>Niterói</td>
+                                <td>850,5</td>
+                                <td>5.5%</td>
+                                <td>46,7</td>
+                            </tr>
+                             <tr>
+                                <td>Duque de Caxias</td>
+                                <td>730,2</td>
+                                <td>8.2%</td>
+                                <td>59,8</td>
+                            </tr>
+                            <!-- Adicione mais linhas conforme necessário -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financeiro Interativo</title>
+    <!-- Importação do Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importação da biblioteca ApexCharts.js -->
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <!-- Importação da fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para a página */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Estilo para a barra de rolagem (opcional, mas melhora a estética) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* cinza escuro */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ec4899; /* rosa */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f472b6;
+        }
+
+        /* Força a cor do ícone do calendário a ser branca */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        
+        /* Classe para o botão de navegação ativo */
+        .nav-button-active {
+            background-color: #8b5cf6 !important; /* Roxo mais forte */
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.5);
+        }
+
+        /* Garante que o container do gráfico preencha o espaço */
+        .chart-container {
+            min-height: 400px;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="min-h-screen flex flex-col p-4 md:p-8">
+        <!-- Cabeçalho -->
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
+                Dashboard de Análise de Ativos
+            </h1>
+            <p class="text-gray-400 mt-1">Selecione o ativo e o período para visualizar os dados.</p>
+        </header>
+
+        <!-- Container Principal: Controles e Gráficos -->
+        <div class="flex-grow flex flex-col lg:flex-row gap-8">
+            
+            <!-- Barra Lateral de Controles -->
+            <aside class="w-full lg:w-1/4 xl:w-1/5 bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700 flex flex-col">
+                <h2 class="text-xl font-semibold mb-6 border-b border-gray-600 pb-3">Filtros</h2>
+                
+                <div class="space-y-6">
+                    <!-- Seletor de Ação -->
+                    <div>
+                        <label for="stock-select" class="block mb-2 text-sm font-medium text-gray-300">Ação</label>
+                        <select id="stock-select" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 transition">
+                            <option value="PETR4">PETR4 - Petrobras</option>
+                            <option value="VALE3">VALE3 - Vale</option>
+                            <option value="ITUB4">ITUB4 - Itaú Unibanco</option>
+                            <option value="BBDC4">BBDC4 - Bradesco</option>
+                            <option value="MGLU3">MGLU3 - Magazine Luiza</option>
+                        </select>
+                    </div>
+
+                    <!-- Seletor de Data de Início -->
+                    <div>
+                        <label for="start-date" class="block mb-2 text-sm font-medium text-gray-300">Data de Início</label>
+                        <input type="date" id="start-date" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 transition">
+                    </div>
+
+                    <!-- Seletor de Data de Fim -->
+                    <div>
+                        <label for="end-date" class="block mb-2 text-sm font-medium text-gray-300">Data de Fim</label>
+                        <input type="date" id="end-date" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 transition">
+                    </div>
+                </div>
+
+                <!-- Botão de Análise -->
+                <div class="mt-auto pt-6 border-t border-gray-600">
+                    <button id="analyze-button" class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50">
+                        Analisar
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Área Principal dos Gráficos -->
+            <main class="w-full lg:w-3/4 xl:w-4/5 flex flex-col">
+                <!-- Navegação dos Gráficos -->
+                <nav class="flex flex-wrap gap-2 md:gap-4 mb-6">
+                    <button data-chart="candlestick" class="chart-nav-button nav-button-active flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Candlestick</button>
+                    <button data-chart="highs" class="chart-nav-button flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Máximas e Mínimas</button>
+                    <button data-chart="moving-average" class="chart-nav-button flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Média Móvel</button>
+                    <button data-chart="volume" class="chart-nav-button flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Volume Negociado</button>
+                </nav>
+
+                <!-- Container do Gráfico -->
+                <div class="flex-grow bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700 flex items-center justify-center chart-container">
+                    <!-- Os gráficos serão renderizados aqui pelo ApexCharts -->
+                    <div id="candlestick-chart-container" class="chart-content w-full h-full"></div>
+                    <div id="highs-chart-container" class="chart-content hidden w-full h-full"></div>
+                    <div id="moving-average-chart-container" class="chart-content hidden w-full h-full"></div>
+                    <div id="volume-chart-container" class="chart-content hidden w-full h-full"></div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Variáveis para guardar as instâncias dos gráficos
+            let charts = {};
+            
+            // --- CONFIGURAÇÕES E ELEMENTOS DO DOM ---
+            const analyzeButton = document.getElementById('analyze-button');
+            const navButtons = document.querySelectorAll('.chart-nav-button');
+            const chartContainers = document.querySelectorAll('.chart-content');
+            const stockSelect = document.getElementById('stock-select');
+            const startDateInput = document.getElementById('start-date');
+            const endDateInput = document.getElementById('end-date');
+
+            // --- FUNÇÕES DE GERAÇÃO DE DADOS E GRÁFICOS ---
+
+            /**
+             * Gera dados de mercado (OHLCV) de forma procedural para um período.
+             * Isso simula uma chamada de API.
+             * @param {Date} startDate - Data de início.
+             * @param {Date} endDate - Data de fim.
+             * @returns {Array} - Array de dados para os gráficos.
+             */
+            function generateMockData(startDate, endDate) {
+                const data = [];
+                let currentDate = new Date(startDate);
+                let lastClose = Math.random() * 20 + 30; // Preço inicial
+
+                while (currentDate <= endDate) {
+                    if (currentDate.getDay() > 0 && currentDate.getDay() < 6) { // Pular fins de semana
+                        const open = lastClose * (1 + (Math.random() - 0.5) * 0.02);
+                        const close = open * (1 + (Math.random() - 0.5) * 0.05);
+                        const high = Math.max(open, close) * (1 + Math.random() * 0.02);
+                        const low = Math.min(open, close) * (1 - Math.random() * 0.02);
+                        const volume = Math.floor(Math.random() * 5000000) + 1000000;
+                        
+                        data.push({
+                            x: new Date(currentDate),
+                            y: [open, high, low, close],
+                            volume: volume
+                        });
+                        lastClose = close;
+                    }
+                    currentDate.setDate(currentDate.getDate() + 1);
+                }
+                return data;
+            }
+
+            /**
+             * Calcula a Média Móvel Simples (MMS).
+             * @param {Array} data - Dados de mercado.
+             * @param {number} period - Período da média móvel.
+             * @returns {Array} - Array com os dados da média móvel.
+             */
+            function calculateSMA(data, period) {
+                const smaData = [];
+                for (let i = period - 1; i < data.length; i++) {
+                    const slice = data.slice(i - period + 1, i + 1);
+                    const sum = slice.reduce((acc, val) => acc + val.y[3], 0); // Soma dos preços de fechamento
+                    smaData.push({
+                        x: data[i].x,
+                        y: sum / period
+                    });
+                }
+                return smaData;
+            }
+
+            /**
+             * Função genérica para criar ou atualizar um gráfico.
+             * @param {string} chartId - ID do container do gráfico.
+             * @param {object} options - Opções do ApexCharts.
+             */
+            function renderChart(chartId, options) {
+                // Se o gráfico já existe, o destrói antes de criar um novo
+                if (charts[chartId]) {
+                    charts[chartId].destroy();
+                }
+                const chartContainer = document.getElementById(chartId);
+                charts[chartId] = new ApexCharts(chartContainer, options);
+                charts[chartId].render();
+            }
+
+            /**
+             * Renderiza todos os gráficos com base nos dados fornecidos.
+             * @param {Array} data - Dados de mercado.
+             */
+            function renderAllCharts(data) {
+                // Dados processados para cada tipo de gráfico
+                const candlestickData = data.map(d => ({ x: d.x, y: d.y }));
+                const volumeData = data.map(d => ({ x: d.x, y: d.volume }));
+                const highLowData = [
+                    { name: 'Máxima', data: data.map(d => ({ x: d.x, y: d.y[1] })) },
+                    { name: 'Mínima', data: data.map(d => ({ x: d.x, y: d.y[2] })) }
+                ];
+                const movingAverageData = [
+                    { name: 'Fechamento', data: data.map(d => ({ x: d.x, y: d.y[3] })) },
+                    { name: 'MMS 20 Períodos', data: calculateSMA(data, 20) }
+                ];
+
+                const commonOptions = {
+                    chart: { 
+                        background: 'transparent',
+                        toolbar: { show: true, tools: { download: false } }
+                    },
+                    theme: { mode: 'dark' },
+                    xaxis: { type: 'datetime' },
+                    yaxis: { labels: { formatter: (val) => val.toFixed(2) } },
+                    grid: { borderColor: '#4a5568' },
+                    noData: { text: 'Carregando...', style: { color: '#cbd5e0' } }
+                };
+
+                // 1. Gráfico Candlestick
+                renderChart('candlestick-chart-container', {
+                    ...commonOptions,
+                    series: [{ data: candlestickData }],
+                    chart: { ...commonOptions.chart, type: 'candlestick', height: '100%' },
+                    title: { text: `Análise Candlestick - ${stockSelect.value}`, align: 'left', style: {color: '#e5e7eb'} },
+                    plotOptions: { candlestick: { colors: { upward: '#10b981', downward: '#ef4444' } } }
+                });
+
+                // 2. Gráfico de Máximas e Mínimas
+                renderChart('highs-chart-container', {
+                    ...commonOptions,
+                    series: highLowData,
+                    colors: ['#a855f7', '#ec4899'],
+                    chart: { ...commonOptions.chart, type: 'line', height: '100%' },
+                    title: { text: `Máximas e Mínimas - ${stockSelect.value}`, align: 'left', style: {color: '#e5e7eb'} },
+                    stroke: { width: 2, curve: 'smooth' },
+                    tooltip: { x: { format: 'dd MMM yyyy' } }
+                });
+
+                // 3. Gráfico de Média Móvel
+                renderChart('moving-average-chart-container', {
+                    ...commonOptions,
+                    series: movingAverageData,
+                    colors: ['#3b82f6', '#f59e0b'],
+                    chart: { ...commonOptions.chart, type: 'line', height: '100%' },
+                    title: { text: `Média Móvel (MMS 20) - ${stockSelect.value}`, align: 'left', style: {color: '#e5e7eb'} },
+                    stroke: { width: [2, 3], dashArray: [0, 4] },
+                    tooltip: { x: { format: 'dd MMM yyyy' } }
+                });
+
+                // 4. Gráfico de Volume
+                renderChart('volume-chart-container', {
+                    ...commonOptions,
+                    series: [{ name: 'Volume', data: volumeData }],
+                    colors: ['#d946ef'],
+                    chart: { ...commonOptions.chart, type: 'bar', height: '100%' },
+                    title: { text: `Volume Negociado - ${stockSelect.value}`, align: 'left', style: {color: '#e5e7eb'} },
+                    plotOptions: { bar: { columnWidth: '60%', colors: { ranges: [{ from: 0, to: 10000000, color: '#d946ef' }] } } },
+                    yaxis: { labels: { formatter: (val) => `${(val / 1000000).toFixed(1)}M` } },
+                });
+            }
+
+            // --- LÓGICA DE EVENTOS ---
+            
+            // Evento de clique no botão "Analisar"
+            analyzeButton.addEventListener('click', () => {
+                const startDate = new Date(startDateInput.value);
+                const endDate = new Date(endDateInput.value);
+                
+                if (startDate >= endDate) {
+                    alert('A data de início deve ser anterior à data de fim.');
+                    return;
+                }
+
+                // Simula o carregamento dos dados e renderiza os gráficos
+                const mockData = generateMockData(startDate, endDate);
+                renderAllCharts(mockData);
+            });
+
+            // Evento de clique na navegação dos gráficos
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetChartId = button.dataset.chart + '-chart-container';
+                    
+                    navButtons.forEach(btn => btn.classList.remove('nav-button-active'));
+                    button.classList.add('nav-button-active');
+
+                    chartContainers.forEach(container => {
+                        container.classList.add('hidden');
+                    });
+
+                    const targetContainer = document.getElementById(targetChartId);
+                    if (targetContainer) {
+                        targetContainer.classList.remove('hidden');
+                    }
+                });
+            });
+
+            // --- INICIALIZAÇÃO ---
+
+            // Define a data padrão dos date pickers
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            endDateInput.value = today.toISOString().split('T')[0];
+            startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+
+            // Dispara o clique no botão "Analisar" para carregar os dados iniciais
+            analyzeButton.click();
+        });
+    </script>
+
+</body>
+</html>

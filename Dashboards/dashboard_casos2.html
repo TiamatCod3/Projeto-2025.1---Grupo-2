@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Monitoramento - Mockup</title>
+    <!-- Incluindo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo a fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para combinar com as imagens */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e2e8f0; /* Fundo cinza mais claro */
+        }
+        /* Estilo base para os cards, idêntico ao da imagem */
+        .info-card {
+            background-color: #ffffff;
+            border: 2px solid #4a90e2; /* Borda azul como na imagem */
+            border-radius: 0.5rem; /* Bordas levemente arredondadas */
+            padding: 1rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .card-content {
+            font-size: 0.875rem;
+            color: #555;
+            flex-grow: 1;
+        }
+        .card-content ul {
+            list-style-position: inside;
+        }
+        .card-content li, .card-content p {
+            margin-bottom: 0.25rem;
+        }
+        .placeholder-text {
+            color: #4a90e2; /* Texto do placeholder em azul */
+            font-family: monospace;
+        }
+        /* Estilos para os botões de navegação */
+        .nav-button {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        .nav-button:hover {
+            background-color: #2d3748;
+        }
+        .nav-button.active {
+            background-color: #4a90e2;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-6">
+
+    <!-- Navegação entre as páginas -->
+    <div class="flex justify-center mb-6 space-x-4">
+        <button id="btn-page1" class="nav-button active" onclick="showPage('page1')">Página 1</button>
+        <button id="btn-page2" class="nav-button" onclick="showPage('page2')">Página 2</button>
+    </div>
+
+    <!-- Container da Página 1 -->
+    <div id="page1">
+        <!-- Linha de Métricas Superior -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+            <div class="info-card">
+                <h2 class="card-title">Total de casos confirmados</h2>
+                <div class="card-content">
+                    <ul>
+                        <li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card">
+                <h2 class="card-title">Total de óbitos</h2>
+                 <div class="card-content">
+                    <ul>
+                        <li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card">
+                <h2 class="card-title">Letalidade (total de óbitos / total de casos confirmados)</h2>
+                 <div class="card-content">
+                    <ul>
+                        <li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card">
+                <h2 class="card-title">Mortalidade (total de óbitos / total de habitantes)</h2>
+                 <div class="card-content">
+                    <ul>
+                        <li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                        <li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Grid Principal de Conteúdo -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <!-- Coluna 1 -->
+            <div class="space-y-4">
+                <div class="info-card">
+                    <h2 class="card-title">Casos no Brasil</h2>
+                    <p class="card-content placeholder-text">&lt;Mapa do Brasil por estados com padrão de cor degradê baseado no total de casos confirmados até o momento.&gt;</p>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Casos no Estado do Rio de Janeiro</h2>
+                    <p class="card-content placeholder-text">&lt;Mapa do RJ por cidades com padrão de cor degradê baseado no total de casos confirmados até o momento&gt;</p>
+                </div>
+            </div>
+            <!-- Coluna 2 -->
+            <div class="space-y-4">
+                <div class="info-card">
+                    <h2 class="card-title">Casos por região</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de setores por região do Brasil com o % de casos confirmados (acumulados) de cada região. O gráfico deverá apresentar legenda.&gt;</p>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Casos por estados da região Sudeste</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de setores por estados e % do total de casos confirmados (acumulados) de cada um com legenda.&gt;</p>
+                </div>
+            </div>
+            <!-- Coluna 3 -->
+            <div class="space-y-4">
+                <div class="info-card">
+                    <h2 class="card-title">10 cidades do Brasil com maior taxa de casos confirmados <span class="font-normal">(casos confirmados / habitantes)</span></h2>
+                    <p class="card-content placeholder-text">&lt;Tabela com 5 colunas: UF, Nome (nome da cidade), Taxa (total de casos confirmados / habitantes), Letalidade (total de óbitos / total de casos) e Mortalidade (total de óbitos / habitantes). Os valores devem tomar como base o total de casos acumulados. As cidades devem estar ordenadas por UF e a seguir pelo Nome.&gt;</p>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">10 cidades do Estado do RJ com maior taxa de casos confirmados <span class="font-normal">(casos confirmados / habitantes)</span></h2>
+                    <p class="card-content placeholder-text">&lt;Tabela com 4 colunas: Nome (nome da cidade), Taxa (total de casos confirmados / habitantes), Letalidade (total de óbitos / total de casos confirmados) e Mortalidade (total de óbitos / habitantes). Os valores devem tomar como base o total de casos acumulados. As cidades devem estar ordenadas pelo Nome.&gt;</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Container da Página 2 (inicialmente oculto) -->
+    <div id="page2" class="hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <!-- Coluna 1 -->
+            <div class="space-y-4">
+                <div class="info-card">
+                    <h2 class="card-title">Casos novos por dia</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de dispersão, tendo os pontos ligados, com o eixo X representando os dias e o eixo Y o total de casos novos (não confundir com o valor acumulado) por dia de todo o Brasil e do estado do RJ. No eixo X, deve aparecer um contador de 1 ao total de dias e não a informação de data. As linhas para Brasil e RJ devem possuir cores diferentes e o gráfico uma legenda. Para os dias em que não existir uma coleta para o Brasil ou para o Rio de Janeiro, dever ser considerado o valor 0.&gt;</p>
+                </div>
+                 <div class="info-card">
+                    <h2 class="card-title">Média móvel de óbitos do Brasil e do Estado do Rio de Janeiro</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de dispersão formado pela média móvel com uma janela de 6 dias (dia atual + 5 anteriores) do total de óbitos do Brasil e do estado do RJ. No eixo X, deve aparecer um contador de dias e não a informação de data. Para os dias em que não existir uma coleta para o Brasil ou para o Rio de Janeiro, dever ser considerado o valor 0. Faça uma análise de tendência utilizando a variação percentual do valor da média móvel do último dia contra o valor da média móvel do décimo quarto dia anterior e verifique se: está "Estável" se a variação do último dia para o primeiro for de até 15% positivos ou negativos; está "Em crescimento" se a variação for acima de 15%; está "Em queda" se for mais do que 15% negativos. Aplique a análise ao Brasil e ao estado do RJ.&gt;</p>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Casos acumulados e óbitos do Estado do Rio de Janeiro</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de dispersão, tendo os pontos ligados, com o eixo X representando os dias e o eixo Y o total de casos acumulados e o total de óbitos acumulados até o último dia de todo o estado do Rio de Janeiro. No eixo X, deve aparecer um contador de 1 ao total de dias e não a informação de data. A linha para total de casos acumulados deve ter a cor "azul" e a linha para o total de óbitos acumulados dever ter a cor "vermelha".&gt;</p>
+                </div>
+            </div>
+            <!-- Coluna 2 -->
+            <div class="space-y-4">
+                 <div class="info-card">
+                    <h2 class="card-title">Casos por Estado</h2>
+                    <p class="card-content placeholder-text">&lt;Tabela com 5 colunas: UF do estado, Confirmado (total de casos), Óbitos (total de óbitos), Letalidade (total de óbitos / total de casos) e Mortalidade (total de óbitos / total de habitantes). Os valores devem tomar como base o total de casos acumulados. Os estados devem estar ordenados pela UF.&gt;</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Função para alternar a visibilidade das páginas
+        function showPage(pageId) {
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('btn-page1').classList.remove('active');
+            document.getElementById('btn-page2').classList.remove('active');
+
+            document.getElementById(pageId).classList.remove('hidden');
+            document.getElementById('btn-' + pageId).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>

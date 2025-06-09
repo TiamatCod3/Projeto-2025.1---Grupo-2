@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Financeiro</title>
+    <!-- Importação do Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Importação da fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilo base para a página */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Estilo para a barra de rolagem (opcional, mas melhora a estética) */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748; /* cinza escuro */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #7a3a6b; /* tom de roxo/rosa */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9d4b8a;
+        }
+
+        /* Força a cor do ícone do calendário a ser branca (pode não funcionar em todos os navegadores) */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+        
+        /* Classe para o botão de navegação ativo */
+        .nav-button-active {
+            background-color: #8b5cf6 !important; /* Roxo mais forte */
+            color: #ffffff !important;
+            box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div class="min-h-screen flex flex-col p-4 md:p-8">
+        <!-- Cabeçalho -->
+        <header class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
+                Dashboard de Análise de Ativos
+            </h1>
+            <p class="text-gray-400 mt-1">Selecione o ativo e o período para visualizar os dados.</p>
+        </header>
+
+        <!-- Container Principal: Controles e Gráficos -->
+        <div class="flex-grow flex flex-col lg:flex-row gap-8">
+            
+            <!-- Barra Lateral de Controles -->
+            <aside class="w-full lg:w-1/4 xl:w-1/5 bg-gray-800 p-6 rounded-2xl shadow-2xl border border-gray-700">
+                <h2 class="text-xl font-semibold mb-6 border-b border-gray-600 pb-3">Filtros</h2>
+                
+                <div class="space-y-6">
+                    <!-- Seletor de Ação -->
+                    <div>
+                        <label for="stock-select" class="block mb-2 text-sm font-medium text-gray-300">Ação</label>
+                        <select id="stock-select" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 transition">
+                            <option selected>Escolha um ativo</option>
+                            <option value="PETR4">PETR4 - Petrobras</option>
+                            <option value="VALE3">VALE3 - Vale</option>
+                            <option value="ITUB4">ITUB4 - Itaú Unibanco</option>
+                            <option value="BBDC4">BBDC4 - Bradesco</option>
+                            <option value="MGLU3">MGLU3 - Magazine Luiza</option>
+                        </select>
+                    </div>
+
+                    <!-- Seletor de Data de Início -->
+                    <div>
+                        <label for="start-date" class="block mb-2 text-sm font-medium text-gray-300">Data de Início</label>
+                        <input type="date" id="start-date" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 transition">
+                    </div>
+
+                    <!-- Seletor de Data de Fim -->
+                    <div>
+                        <label for="end-date" class="block mb-2 text-sm font-medium text-gray-300">Data de Fim</label>
+                        <input type="date" id="end-date" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2.5 transition">
+                    </div>
+                </div>
+
+                <!-- Botão de Análise -->
+                <div class="mt-8 pt-6 border-t border-gray-600">
+                    <button class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50">
+                        Analisar
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Área Principal dos Gráficos -->
+            <main class="w-full lg:w-3/4 xl:w-4/5 flex flex-col">
+                <!-- Navegação dos Gráficos -->
+                <nav class="flex flex-wrap gap-2 md:gap-4 mb-6">
+                    <button data-chart="candlestick" class="chart-nav-button nav-button-active flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Candlestick</button>
+                    <button data-chart="highs" class="chart-nav-button flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Máximas e Mínimas</button>
+                    <button data-chart="moving-average" class="chart-nav-button flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Média Móvel</button>
+                    <button data-chart="volume" class="chart-nav-button flex-grow md:flex-grow-0 text-sm md:text-base font-semibold px-6 py-3 bg-gray-700 text-gray-300 rounded-lg hover:bg-purple-600 hover:text-white transition-all duration-300">Volume Negociado</button>
+                </nav>
+
+                <!-- Container do Gráfico -->
+                <div id="chart-container" class="flex-grow bg-gray-800 p-4 rounded-2xl shadow-2xl border border-gray-700 flex items-center justify-center">
+                    <!-- Gráficos (placeholders de imagem) -->
+                    <img id="candlestick-chart" src="https://placehold.co/1000x500/1f2937/d8b4fe?text=Gráfico+Candlestick" alt="Gráfico Candlestick" class="chart-content w-full h-auto object-contain rounded-lg">
+                    <img id="highs-chart" src="https://placehold.co/1000x500/1f2937/f472b6?text=Gráfico+de+Máximas+e+Mínimas" alt="Gráfico de Máximas e Mínimas" class="chart-content hidden w-full h-auto object-contain rounded-lg">
+                    <img id="moving-average-chart" src="https://placehold.co/1000x500/1f2937/a78bfa?text=Gráfico+de+Média+Móvel" alt="Gráfico de Média Móvel" class="chart-content hidden w-full h-auto object-contain rounded-lg">
+                    <img id="volume-chart" src="https://placehold.co/1000x500/1f2937/f9a8d4?text=Gráfico+de+Volume+Negociado" alt="Gráfico de Volume" class="chart-content hidden w-full h-auto object-contain rounded-lg">
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Seleciona todos os botões de navegação e os conteúdos dos gráficos
+            const navButtons = document.querySelectorAll('.chart-nav-button');
+            const chartContents = document.querySelectorAll('.chart-content');
+
+            // Adiciona um evento de clique a cada botão de navegação
+            navButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    // Obtém o ID do gráfico a ser mostrado a partir do atributo data-chart
+                    const targetChartId = button.dataset.chart + '-chart';
+                    
+                    // Remove a classe ativa de todos os botões
+                    navButtons.forEach(btn => btn.classList.remove('nav-button-active'));
+                    // Adiciona a classe ativa ao botão clicado
+                    button.classList.add('nav-button-active');
+
+                    // Esconde todos os gráficos
+                    chartContents.forEach(chart => {
+                        chart.classList.add('hidden');
+                    });
+
+                    // Mostra o gráfico correspondente ao botão clicado
+                    const targetChart = document.getElementById(targetChartId);
+                    if (targetChart) {
+                        targetChart.classList.remove('hidden');
+                    }
+                });
+            });
+            
+            // Define a data padrão dos date pickers para hoje e 30 dias atrás
+            const endDateInput = document.getElementById('end-date');
+            const startDateInput = document.getElementById('start-date');
+
+            const today = new Date();
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(today.getDate() - 30);
+            
+            // Formata a data para YYYY-MM-DD
+            endDateInput.value = today.toISOString().split('T')[0];
+            startDateInput.value = thirtyDaysAgo.toISOString().split('T')[0];
+        });
+    </script>
+
+</body>
+</html>

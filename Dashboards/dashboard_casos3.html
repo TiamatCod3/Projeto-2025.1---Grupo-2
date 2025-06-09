@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Monitoramento - Mockup Final</title>
+    <!-- Incluindo Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Incluindo a fonte Inter do Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos personalizados para combinar com as imagens */
+        html, body {
+            height: 100%;
+            overflow-x: hidden;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5; /* Fundo cinza como no PDF */
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .page-container {
+            flex-grow: 1;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+        /* Estilo base para os cards, idêntico ao da imagem */
+        .info-card {
+            background-color: #ffffff;
+            border: 2px solid #4a90e2; /* Borda azul como na imagem */
+            border-radius: 0.5rem; /* Bordas levemente arredondadas */
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+        .card-content {
+            font-size: 0.875rem;
+            color: #555;
+            flex-grow: 1; /* Faz o conteúdo crescer para preencher o espaço */
+        }
+        .card-content ul {
+            list-style-position: inside;
+        }
+        .card-content li, .card-content p {
+            margin-bottom: 0.5rem;
+        }
+        .placeholder-text {
+            color: #4a90e2; /* Texto do placeholder em azul */
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-size: 0.9rem;
+        }
+        /* Estilos para os botões de navegação */
+        .nav-button {
+            background-color: #4a5568;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            transition: background-color 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-button:hover {
+            background-color: #2d3748;
+        }
+        .nav-button.active {
+            background-color: #4a90e2;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navegação entre as páginas -->
+    <nav class="flex justify-center p-4 space-x-4 bg-white shadow-md">
+        <button id="btn-page1" class="nav-button active" onclick="showPage('page1')">Página 1</button>
+        <button id="btn-page2" class="nav-button" onclick="showPage('page2')">Página 2</button>
+    </nav>
+
+    <main>
+        <!-- Container da Página 1 -->
+        <div id="page1" class="page-container">
+            <!-- Linha de Métricas Superior -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                <!-- Os 4 cards de métricas permanecem como antes -->
+                <div class="info-card">
+                    <h2 class="card-title">Total de casos confirmados</h2>
+                    <div class="card-content"><ul><li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li></ul></div>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Total de óbitos</h2>
+                    <div class="card-content"><ul><li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li></ul></div>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Letalidade (...)</h2>
+                    <div class="card-content"><ul><li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li></ul></div>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Mortalidade (...)</h2>
+                    <div class="card-content"><ul><li>Brasil<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Estado do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li><li>Cidade do Rio de Janeiro<br><span class="placeholder-text">&lt;XXX&gt;</span></li></ul></div>
+                </div>
+            </div>
+
+            <!-- Grid Principal de Conteúdo -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 flex-grow">
+                <div class="info-card">
+                    <h2 class="card-title">Casos no Brasil</h2>
+                    <p class="card-content placeholder-text">&lt;Mapa do Brasil por estados com padrão de cor degradê baseado no total de casos confirmados até o momento.&gt;</p>
+                    <hr class="my-4 border-t-2 border-dashed border-gray-300">
+                    <h2 class="card-title">Casos no Estado do Rio de Janeiro</h2>
+                    <p class="card-content placeholder-text">&lt;Mapa do RJ por cidades com padrão de cor degradê baseado no total de casos confirmados até o momento&gt;</p>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Casos por região</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de setores por região do Brasil com o % de casos confirmados (acumulados) de cada região. O gráfico deverá apresentar legenda.&gt;</p>
+                    <hr class="my-4 border-t-2 border-dashed border-gray-300">
+                    <h2 class="card-title">Casos por estados da região Sudeste</h2>
+                    <p class="card-content placeholder-text">&lt;Gráfico de setores por estados e % do total de casos confirmados (acumulados) de cada um com legenda.&gt;</p>
+                </div>
+                <div class="flex flex-col gap-4">
+                    <div class="info-card flex-1">
+                        <h2 class="card-title">10 cidades do Brasil com maior taxa de casos confirmados</h2>
+                        <p class="card-content placeholder-text">&lt;Tabela com 5 colunas: UF, Nome, Taxa, Letalidade e Mortalidade...&gt;</p>
+                    </div>
+                    <div class="info-card flex-1">
+                        <h2 class="card-title">10 cidades do Estado do RJ com maior taxa de casos confirmados</h2>
+                        <p class="card-content placeholder-text">&lt;Tabela com 4 colunas: Nome, Taxa, Letalidade e Mortalidade...&gt;</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Container da Página 2 (inicialmente oculto) -->
+        <div id="page2" class="page-container hidden">
+             <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-grow">
+                <div class="flex flex-col gap-4">
+                    <div class="info-card flex-1">
+                        <h2 class="card-title">Casos novos por dia</h2>
+                        <p class="card-content placeholder-text">&lt;Gráfico de dispersão, tendo os pontos ligados, com o eixo X representando os dias e o eixo Y o total de casos novos...&gt;</p>
+                    </div>
+                    <div class="info-card flex-1">
+                        <h2 class="card-title">Média móvel de óbitos do Brasil e do Estado do Rio de Janeiro</h2>
+                        <p class="card-content placeholder-text">&lt;Gráfico de dispersão formado pela média móvel com uma janela de 6 dias (dia atual + 5 anteriores) do total de óbitos...&gt;</p>
+                    </div>
+                    <div class="info-card flex-1">
+                        <h2 class="card-title">Casos acumulados e óbitos do Estado do Rio de Janeiro</h2>
+                        <p class="card-content placeholder-text">&lt;Gráfico de dispersão, tendo os pontos ligados, com o eixo X representando os dias e o eixo Y o total de casos acumulados...&gt;</p>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <h2 class="card-title">Casos por Estado</h2>
+                    <p class="card-content placeholder-text">&lt;Tabela com 5 colunas: UF do estado, Confirmado, Óbitos, Letalidade e Mortalidade. Os valores devem tomar como base o total de casos acumulados...&gt;</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Função para alternar a visibilidade das páginas
+        function showPage(pageId) {
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('btn-page1').classList.remove('active');
+            document.getElementById('btn-page2').classList.remove('active');
+
+            document.getElementById(pageId).classList.remove('hidden');
+            document.getElementById('btn-' + pageId).classList.add('active');
+        }
+    </script>
+
+</body>
+</html>

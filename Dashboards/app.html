@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Dashboard Financeiro</title>
+  <style>
+    /* Paleta Clean Tech */
+    :root {
+      --bg-dark: #1B263B;
+      --highlight-cyan: #40E0D0;
+      --text-offwhite: #F7FFF7;
+      --label-gray: #A0AEC0;
+      --up-green: #00FFAB;
+      --down-red: #FF6B6B;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-offwhite);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 1rem;
+      border-bottom: 1px solid var(--label-gray);
+    }
+    .controls {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .controls label {
+      color: var(--label-gray);
+      font-size: 0.9rem;
+    }
+    .controls select,
+    .controls input[type="date"] {
+      padding: 0.5rem;
+      background: var(--bg-dark);
+      border: 1px solid var(--label-gray);
+      border-radius: 4px;
+      color: var(--text-offwhite);
+      font-size: 1rem;
+    }
+    nav {
+      background-color: var(--bg-dark);
+      border-bottom: 1px solid var(--label-gray);
+    }
+    .nav-links {
+      display: flex;
+    }
+    .nav-links a {
+      flex: 1;
+      text-align: center;
+      padding: 0.75rem;
+      text-decoration: none;
+      color: var(--text-offwhite);
+      border-right: 1px solid var(--label-gray);
+      transition: background 0.3s;
+    }
+    .nav-links a:last-child { border-right: none; }
+    .nav-links a:hover,
+    .nav-links a:focus {
+      background-color: var(--highlight-cyan);
+      color: var(--bg-dark);
+    }
+    .chart-container {
+      display: none;
+      padding: 2rem;
+      flex: 1;
+    }
+    .chart-container:first-of-type { display: block; }
+    .chart-container:target { display: block; }
+    .chart-placeholder {
+      width: 100%;
+      height: 400px;
+      background: var(--label-gray);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bg-dark);
+      font-size: 1.2rem;
+    }
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--label-gray);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="controls">
+      <div>
+        <label for="stockSelect">Ação:</label>
+        <select id="stockSelect">
+          <option value="AAPL">AAPL</option>
+          <option value="GOOGL">GOOGL</option>
+          <option value="AMZN">AMZN</option>
+          <option value="MSFT">MSFT</option>
+        </select>
+      </div>
+      <div>
+        <label for="startDate">Início:</label>
+        <input type="date" id="startDate" />
+      </div>
+      <div>
+        <label for="endDate">Fim:</label>
+        <input type="date" id="endDate" />
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-links">
+      <a href="#candlestick">Candlestick</a>
+      <a href="#highs">Máximas</a>
+      <a href="#movingAvg">Média Móvel</a>
+      <a href="#volume">Volume</a>
+    </div>
+  </nav>
+
+  <main style="flex:1; display:flex; flex-direction:column;">
+    <section id="candlestick" class="chart-container">
+      <div class="chart-placeholder">Gráfico Candlestick</div>
+    </section>
+    <section id="highs" class="chart-container">
+      <div class="chart-placeholder">Gráfico de Máximas</div>
+    </section>
+    <section id="movingAvg" class="chart-container">
+      <div class="chart-placeholder">Gráfico de Média Móvel</div>
+    </section>
+    <section id="volume" class="chart-container">
+      <div class="chart-placeholder">Gráfico de Volume Negociado</div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Mock Dashboard - Tema Clean Tech</p>
+  </footer>
+</body>
+</html>

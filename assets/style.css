@@ -1,0 +1,32 @@
+/* assets/style.css */
+
+/* Estilo principal para os cards, replicando o design da imagem */
+.info-card {
+    border: 2px solid #4a90e2; /* Borda azul como na imagem */
+    display: flex; /* Garante que os cards na mesma coluna possam ter a mesma altura */
+    flex-direction: column;
+}
+
+/* Garante que o corpo do card cresça para preencher o espaço */
+.info-card .card-body {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* O conteúdo dentro do corpo do card também deve crescer */
+.card-content {
+    flex-grow: 1;
+}
+
+/* Estilo para os textos de placeholder, como <XXX> */
+.placeholder-text {
+    color: #0d6efd; /* Azul do Bootstrap primary, para consistência */
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+}
+
+/* Garante que a aplicação ocupe toda a altura da tela */
+html, body {
+    height: 100%;
+}

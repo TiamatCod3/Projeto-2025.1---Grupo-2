@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock Dashboard Financeiro - 4 Gráficos</title>
+  <style>
+    /* Paleta Clean Tech Melhorada */
+    :root {
+      --bg-dark: #1B263B;
+      --bg-secondary: #283444;
+      --highlight-cyan: #40E0D0;
+      --text-offwhite: #F7FFF7;
+      --label-gray: #A0AEC0;
+      --up-green: #00FFAB;
+      --down-red: #FF6B6B;
+      --nav-hover: #2D3A50;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { display: flex; flex-direction: column; min-height: 100vh; background: var(--bg-dark); color: var(--text-offwhite); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    header { background: var(--bg-secondary); padding: 1rem; border-bottom: 1px solid var(--label-gray); }
+    .controls { display: flex; gap: 1rem; align-items: center; }
+    .controls label { color: var(--label-gray); font-size: 0.9rem; }
+    .controls select, .controls input[type="date"] { padding: 0.5rem; background: var(--bg-dark); border: 1px solid var(--label-gray); border-radius: 4px; color: var(--text-offwhite); font-size: 1rem; }
+
+    nav { background: var(--bg-secondary); border-bottom: 1px solid var(--label-gray); }
+    .nav-links { display: flex; }
+    .nav-links a { flex: 1; text-align: center; padding: 0.75rem; text-decoration: none; color: var(--text-offwhite); border-right: 1px solid var(--label-gray); transition: background 0.3s, color 0.3s; }
+    .nav-links a:last-child { border-right: none; }
+    .nav-links a:hover, .nav-links a:focus { background: var(--nav-hover); color: var(--highlight-cyan); }
+
+    main { flex: 1; display: flex; flex-direction: column; }
+    section { display: none; padding: 2rem; flex: 1; background: var(--bg-secondary); }
+    section:target { display: block; }
+    /* Exibe primeira seção por padrão */
+    section#bollinger { display: block; }
+
+    .chart-placeholder { width: 100%; height: 400px; background: #2E4057; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--text-offwhite); font-size: 1.2rem; position: relative; }
+    section#bollinger .chart-placeholder { border-top: 4px solid var(--highlight-cyan); }
+    section#rsi       .chart-placeholder { border-top: 4px solid var(--up-green); }
+    section#macd      .chart-placeholder { border-top: 4px solid var(--label-gray); }
+    section#volumeProfile .chart-placeholder { border-top: 4px solid var(--down-red); }
+
+    footer { background: var(--bg-secondary); text-align: center; padding: 1rem; font-size: 0.8rem; color: var(--label-gray); border-top: 1px solid var(--label-gray); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="controls">
+      <div>
+        <label for="stockSelect">Ação:</label>
+        <select id="stockSelect">
+          <option value="AAPL">AAPL</option>
+          <option value="GOOGL">GOOGL</option>
+          <option value="AMZN">AMZN</option>
+          <option value="MSFT">MSFT</option>
+        </select>
+      </div>
+      <div>
+        <label for="startDate">Início:</label>
+        <input type="date" id="startDate" />
+      </div>
+      <div>
+        <label for="endDate">Fim:</label>
+        <input type="date" id="endDate" />
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-links">
+      <a href="#bollinger">Bollinger Bands</a>
+      <a href="#rsi">RSI</a>
+      <a href="#macd">MACD</a>
+      <a href="#volumeProfile">Volume Profile</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="bollinger">
+      <div class="chart-placeholder">Gráfico de Bollinger Bands</div>
+    </section>
+    <section id="rsi">
+      <div class="chart-placeholder">Gráfico de RSI</div>
+    </section>
+    <section id="macd">
+      <div class="chart-placeholder">Gráfico de MACD</div>
+    </section>
+    <section id="volumeProfile">
+      <div class="chart-placeholder">Gráfico de Volume Profile</div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Mock Dashboard - 4 Gráficos de Análise</p>
+  </footer>
+</body>
+</html>
