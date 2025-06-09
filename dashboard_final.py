@@ -143,25 +143,30 @@ df_estados_table = df_casos_estado.rename(columns={
 })[["UF", "Confirmado", "Obitos", "Letalidade", "Mortalidade"]]
 
 # === MAPAS ===
+# Carregue o shapefile
 shp_brasil = gpd.read_file("Mapas/BR_UF_2022.shp")
 shp_brasil = shp_brasil.rename(columns={"CD_UF": "codigoibge"})
 geojson_brasil = json.loads(shp_brasil.to_json())
 
+# Faça o merge
+df_casos_estado_shp = df_estados_table.merge(shp_brasil, left_on="UF", right_on="SIGLA_UF")
+
+# Agora, use o nome correto da coluna:
 mapa_brasil = px.choropleth(
-    df_estados_table.merge(shp_brasil, left_on="UF", right_on="SIGLA_UF"),
+    df_casos_estado_shp,
     geojson=geojson_brasil,
     locations="codigoibge",
-    color="Confirmados",
+    color="Confirmado",  # <- agora sim bate com o nome da coluna!
     featureidkey="properties.codigoibge",
     title="Casos Confirmados por Estado – Brasil"
 )
 
-shp_rj = gpd.read_file("Mapas/33MUE250GC_SIR.shp")
+shp_rj = gpd.read_file("Mapas/RJ_Municipios_2022.shp")
 shp_rj = shp_rj.rename(columns={"CD_MUN": "codigomunicipal"})
 geojson_rj = json.loads(shp_rj.to_json())
 
 mapa_rj = px.choropleth(
-    casos[casos['uf'] == 'RJ'].groupby('codigomunicipal').agg({'casosnovos': 'sum'}).reset_index().merge(shp_rj, on='codigomunicipal'),
+    df_mun_rj,
     geojson=geojson_rj,
     locations="codigomunicipal",
     color="casosnovos",
@@ -290,9 +295,9 @@ app.layout = html.Div([
                 # COLUNA 1: Mapas
                 html.Div([
                     html.B("Casos no Brasil"),
-                    dcc.Graph(figure=fig_mapa_brasil, config={"displayModeBar": False}, style={"height": altura_mapa}),
+                    dcc.Graph(figure=mapa_brasil, config={"displayModeBar": False}, style={"height": altura_mapa}),
                     html.B("Casos no Estado do Rio de Janeiro", style={"marginTop": "10px"}),
-                    dcc.Graph(figure=fig_mapa_rj, config={"displayModeBar": False}, style={"height": altura_mapa}),
+                    dcc.Graph(figure=mapa_rj, config={"displayModeBar": False}, style={"height": altura_mapa}),
                 ], style=caixa_coluna_style),
 
                 # COLUNA 2: Gráficos de barras
