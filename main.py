@@ -157,7 +157,7 @@ def make_highlight_card(titulo, valor, cor=COLOR_TEXT):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Stock Data Analysis - G2")
+        self.setWindowTitle("Análise Dados de Ações")
         self.resize(1280, 900)
         self.setStyleSheet(f"background-color: {COLOR_BG}; color: {COLOR_TEXT};")
         widget = QWidget()
@@ -167,7 +167,7 @@ class MainWindow(QMainWindow):
 
         # Top Bar
         topbar = QHBoxLayout()
-        logo = QLabel("📈 Stock Data Analysis")
+        logo = QLabel("📈 Análise Dados de Ações")
         logo.setStyleSheet(f"font-size: 28px; color: {COLOR_TEXT}; font-weight: bold;")
         topbar.addWidget(logo)
         topbar.addStretch()
